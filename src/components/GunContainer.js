@@ -42,8 +42,9 @@ export const GunContainer = ({ id, priv, epriv }) => {
             id={id}
             container={container}
             setContainerName={name => put([id, "name", name])}
-            onSetLeftUrl={left => put([id, "left", left])}
-            onSetRightUrl={right => put([id, "right", right])}
+            onSetFirstUrl={first => put([id, "first", first])}
+            onSetSecondUrl={second => put([id, "second", second])}
+            onSetSwitch={s => put([id, "switch", s])}
         />
     );
 };

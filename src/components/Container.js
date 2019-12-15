@@ -4,69 +4,88 @@ import { getId, getPub } from "nicks-gun-utils";
 export const Container = ({
     id,
     container,
-    onSetLeftUrl,
-    onSetRightUrl,
+    onSetFirstUrl,
+    onSetSecondUrl,
+    onSetSwitch,
     setContainerName
 }) => {
     const pub = getPub(id);
     const [newName, setNewName] = useState("");
-    const [newLeft, setLeftUrl] = useState("");
-    const [newRight, setRightUrl] = useState("");
+    const [newFirst, setFirstUrl] = useState("");
+    const [newSecond, setSecondUrl] = useState("");
+    const [hoverUrl, setHoverUrl] = useState();    
 
-    const name =
-        container.name ||
-        id.replace(`~${pub}.`, "").replace(`~${pub}`, "") ||
-        "Container";
-
-        
-
-    let leftJsx = container && container.left?
+    let firstJsx = container && container.first?
         (
-            <iframe src={container.left} frameBorder="0"/>
+            <iframe src={container.first} frameBorder="0"/>
         ):
         (
-            <form
-                onSubmit={e => {
-                    e.preventDefault();
-                    onSetLeftUrl(newLeft);
-                }}
-            >
-                <input
-                    autoFocus
-                    value={newLeft}
-                    onChange={e => setLeftUrl(e.target.value)}
-                    placeholder="set tool url"
-                />
-            </form>
+            <></>
         )
-    let rightJsx = container && container.right?
+    let secondJsx = container && container.second?
         (
-            <iframe src={container.right} frameBorder="0"/>
+            <iframe src={container.second} frameBorder="0"/>
         ):
         (
-            <form
-                onSubmit={e => {
-                e.preventDefault();
-                onSetRightUrl(newRight);
-                }}
-            >
-                <input
-                    autoFocus
-                    value={newRight}
-                    onChange={e => setRightUrl(e.target.value)}
-                    placeholder="set tool url"
-                />
-            </form>
+            <></>
         )
 
     return (
-        <div className="container">
-            <div className="left-container">
-                {leftJsx}
+        <div className={container.switch? "horizontal" : "vertical"}>
+            <div 
+                className="content"
+                onMouseEnter={() => {
+                    setHoverUrl(container.first)
+                }}>
+                {firstJsx}
+                {hoverUrl === container.first? (
+                    <div className="bottom-bar">
+                        <form onSubmit={e => {
+                            e.preventDefault();
+                            onSetFirstUrl(newFirst)
+                        }}>
+                            <input
+                                value={newFirst? newFirst : container.first}
+                                onChange={e => setFirstUrl(e.target.value)}>
+                            </input>
+                        </form>
+                        <Switch set={onSetSwitch} s={container.switch}/>
+                    </div>
+                ) : (
+                    <></>
+                )}
             </div>
-            <div className="right-container">
-                {rightJsx}
+            <div 
+                className="content"
+                onMouseEnter={() => {
+                    setHoverUrl(container.second)
+                }}>
+                {secondJsx}
+                {hoverUrl === container.second? (
+                    <div className="bottom-bar">
+                        <form onSubmit={e => {
+                            e.preventDefault();
+                            onSetSecondUrl(newSecond)
+                        }}>
+                            <input
+                                value={newSecond? newSecond : container.second}
+                                onChange={e => setSecondUrl(e.target.value)}>
+                            </input>
+                        </form>
+                        <Switch set={onSetSwitch} s={container.switch}/>
+                    </div>
+                ) : (
+                    <></>
+                )}
             </div>
         </div>
     )
 }
+
+const Switch = ({set, s}) => (
+    <button
+        className="switch"
+        onClick={() => set(!s)}>
+        s
+    </button>
+)
